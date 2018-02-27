@@ -10,7 +10,7 @@ import kotlin.properties.Delegates.observable
 
 class TasksActivity : AppCompatActivity() {
 
-    var tasks by observable(listOf("Wash dishes", "Make Kotlin course")) { _, _, _ ->
+    var tasks by observable(listOf(Task("Wash dishes"), Task("Make Kotlin course"))) { _, _, _ ->
         refreshList()
     }
     val ADD_TASK_REQUEST = 12342
@@ -25,14 +25,14 @@ class TasksActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(requestCode == ADD_TASK_REQUEST && resultCode == Activity.RESULT_OK) {
-            val name = data?.getStringExtra("name") ?: return
-            tasks += name
+        if (requestCode == ADD_TASK_REQUEST && resultCode == Activity.RESULT_OK) {
+            tasks += data?.getParcelableExtra<Task>("task") ?: return
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun refreshList() {
-        tasksListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, tasks)
+        val tasksNames = tasks.map { it.name }
+        tasksListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, tasksNames)
     }
 }

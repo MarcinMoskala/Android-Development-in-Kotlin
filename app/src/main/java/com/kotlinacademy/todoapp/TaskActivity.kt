@@ -18,8 +18,9 @@ class TaskActivity : AppCompatActivity() {
         }
         addTaskButton.setOnClickListener {
             val name = taskNameView.text.toString()
+            val task = Task(name)
             val bundle = Intent()
-            bundle.putExtra("name", name)
+            bundle.putExtra("task", task)
             setResult(Activity.RESULT_OK, bundle)
             finish()
         }
