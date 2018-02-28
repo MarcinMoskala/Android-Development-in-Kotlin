@@ -32,7 +32,12 @@ class TasksActivity : AppCompatActivity() {
     }
 
     private fun refreshList() {
-        val tasksNames = tasks.map { it.name }
+        val tasksNames = tasks.map {
+            val name = it.name
+            val date = it.date?.toString(DATE_FORMAT) ?: ""
+            val time = it.time?.toString(TIME_FORMAT) ?: ""
+            "$name $date $time"
+        }
         tasksListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, tasksNames)
     }
 }
