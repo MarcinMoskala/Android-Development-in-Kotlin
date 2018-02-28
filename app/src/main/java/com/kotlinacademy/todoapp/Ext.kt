@@ -10,7 +10,7 @@ import org.joda.time.LocalTime
 
 fun Context.showDatePicker(initialValue: LocalDate, onChange: (LocalDate) -> Unit) {
     val onChoseListener: (DatePicker, Int, Int, Int) -> Unit = { _, year, month, dayOfMonth ->
-        onChange(LocalDate(year, month, dayOfMonth))
+        onChange(LocalDate(year, month + 1, dayOfMonth))
     }
     DatePickerDialog(this, onChoseListener, initialValue.year, initialValue.monthOfYear, initialValue.dayOfMonth).show()
 }
