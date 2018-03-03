@@ -5,16 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.activity_tasks.*
-import kotlin.properties.Delegates.observable
 
 class TasksActivity : AppCompatActivity() {
 
-    var tasks by observable(listOf(Task("Wash dishes"), Task("Make Kotlin course"))) { _, _, _ ->
-        refreshList()
-    }
-    val ADD_TASK_REQUEST = 12342
+    private val ADD_TASK_REQUEST = 12342
+    private val tasksListAdapter by lazy { TasksListAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,18 +18,16 @@ class TasksActivity : AppCompatActivity() {
         fab.setOnClickListener {
             startActivityForResult(Intent(this, TaskActivity::class.java), ADD_TASK_REQUEST)
         }
-        refreshList()
+        tasksListAdapter.add(Task("Wash dishes"))
+        tasksListView.adapter = tasksListAdapter
         tasksListView.layoutManager = LinearLayoutManager(this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == ADD_TASK_REQUEST && resultCode == Activity.RESULT_OK) {
-            tasks += data?.getParcelableExtra<Task>("task") ?: return
+            val task = data?.getParcelableExtra<Task>("task") ?: return
+            tasksListAdapter.add(task)
         }
         super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    private fun refreshList() {
-        tasksListView.adapter = TasksListAdapter(tasks)
     }
 }

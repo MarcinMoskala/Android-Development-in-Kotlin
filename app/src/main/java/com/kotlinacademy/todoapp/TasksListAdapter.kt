@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 
-class TasksListAdapter(private val tasks: List<Task>) : RecyclerView.Adapter<TasksListAdapter.ViewHolder>() {
+class TasksListAdapter : RecyclerView.Adapter<TasksListAdapter.ViewHolder>() {
+
+    private val tasks: MutableList<Task> = mutableListOf()
 
     override fun getItemCount() = tasks.size
 
@@ -22,6 +24,11 @@ class TasksListAdapter(private val tasks: List<Task>) : RecyclerView.Adapter<Tas
         val date = task.date?.toString(DATE_FORMAT) ?: ""
         val time = task.time?.toString(TIME_FORMAT) ?: ""
         holder.labelsView.text = "$date $time"
+    }
+
+    fun add(task: Task) {
+        tasks.add(task)
+        notifyItemInserted(tasks.size - 1)
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
