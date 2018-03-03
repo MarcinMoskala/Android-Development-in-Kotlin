@@ -42,15 +42,15 @@ class TasksActivity : AppCompatActivity() {
 
         val simpleItemTouchCallback = object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-                val fromPositon = viewHolder.adapterPosition
+                val fromPosition = viewHolder.adapterPosition
                 val toPosition = target.adapterPosition
-                tasksListAdapter.moveItem(fromPositon, toPosition)
+                tasksListAdapter.moveItem(fromPosition, toPosition)
                 return true
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val itemPositon = viewHolder.adapterPosition
-                tasksListAdapter.removeAt(itemPositon)
+                val itemPosition = viewHolder.adapterPosition
+                tasksListAdapter.removeAt(itemPosition)
             }
         }
         ItemTouchHelper(simpleItemTouchCallback).attachToRecyclerView(tasksListView)
