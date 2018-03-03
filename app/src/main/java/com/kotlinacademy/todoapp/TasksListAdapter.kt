@@ -31,6 +31,18 @@ class TasksListAdapter : RecyclerView.Adapter<TasksListAdapter.ViewHolder>() {
         notifyItemInserted(tasks.size - 1)
     }
 
+    fun moveItem(from: Int, to: Int) {
+        val item = tasks[from]
+        tasks.removeAt(from)
+        tasks.add(to, item)
+        notifyItemMoved(from, to)
+    }
+
+    fun removeAt(position: Int) {
+        tasks.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val nameView: TextView = view.findViewById(R.id.nameVIew)
         val labelsView: TextView = view.findViewById(R.id.labelsView)
