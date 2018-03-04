@@ -8,7 +8,8 @@ import org.joda.time.LocalTime
 
 @SuppressLint("ParcelCreator")
 @Parcelize
-class Task(
+data class Task(
+        val id: Int,
         val name: String,
         val time: LocalTime? = null,
         val date: LocalDate? = null

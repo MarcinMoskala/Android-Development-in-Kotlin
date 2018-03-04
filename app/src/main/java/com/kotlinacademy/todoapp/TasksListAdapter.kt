@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 
-class TasksListAdapter : RecyclerView.Adapter<TasksListAdapter.ViewHolder>() {
+class TasksListAdapter(val onClick: (Task) -> Unit) : RecyclerView.Adapter<TasksListAdapter.ViewHolder>() {
 
     private val tasks: MutableList<Task> = mutableListOf()
 
@@ -24,11 +24,22 @@ class TasksListAdapter : RecyclerView.Adapter<TasksListAdapter.ViewHolder>() {
         val date = task.date?.toString(DATE_FORMAT) ?: ""
         val time = task.time?.toString(TIME_FORMAT) ?: ""
         holder.labelsView.text = "$date $time"
+
+        holder.view.setOnClickListener {
+            onClick(task)
+        }
     }
 
     fun add(task: Task) {
         tasks.add(task)
         notifyItemInserted(tasks.size - 1)
+    }
+
+    fun update(task: Task) {
+        val position = tasks.indexOfFirst { it.id == task.id }
+        tasks.removeAt(position)
+        tasks.add(position, task)
+        notifyItemChanged(position)
     }
 
     fun moveItem(from: Int, to: Int) {
@@ -43,8 +54,10 @@ class TasksListAdapter : RecyclerView.Adapter<TasksListAdapter.ViewHolder>() {
         notifyItemRemoved(position)
     }
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    fun getNextId() = (tasks.map { it.id }.max() ?: 0) + 1
+    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val nameView: TextView = view.findViewById(R.id.nameVIew)
         val labelsView: TextView = view.findViewById(R.id.labelsView)
+
     }
 }

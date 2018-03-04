@@ -10,12 +10,26 @@ import org.joda.time.LocalTime
 
 class TaskActivity : AppCompatActivity() {
 
-    var date: LocalDate? = null
-    var time: LocalTime? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task)
+
+        val id = intent.getIntExtra("id", -1)
+        var task: Task = if (id == -1) intent.getParcelableExtra("task") else Task(id, "")
+
+        fun updateDateText() {
+            val date = task.date
+            dateView.text = if (date == null) "Click to chose date" else "Chosen date is " + date.toString(DATE_FORMAT)
+        }
+
+        fun updateTimeText() {
+            val time = task.time
+            timeView.text = if (time == null) "Click to chose time" else "Chosen time is " + time.toString(TIME_FORMAT)
+        }
+
+        taskNameView.setText(task.name)
+        updateDateText()
+        updateTimeText()
 
         cancelButton.setOnClickListener {
             setResult(Activity.RESULT_CANCELED)
@@ -23,22 +37,21 @@ class TaskActivity : AppCompatActivity() {
         }
         addTaskButton.setOnClickListener {
             val name = taskNameView.text.toString()
-            val task = Task(name, time, date)
             val bundle = Intent()
-            bundle.putExtra("task", task)
+            bundle.putExtra("task", task.copy(name = name))
             setResult(Activity.RESULT_OK, bundle)
             finish()
         }
         dateView.setOnClickListener {
             showDatePicker(LocalDate.now()) { chosenDate ->
-                dateView.text = "Chosen date is " + chosenDate.toString(DATE_FORMAT)
-                date = chosenDate
+                task = task.copy(date = chosenDate)
+                updateDateText()
             }
         }
         timeView.setOnClickListener {
             showTimePicker(LocalTime.now()) { chosenTime ->
-                timeView.text = "Chosen time is " + chosenTime.toString(TIME_FORMAT)
-                time = chosenTime
+                task = task.copy(time = chosenTime)
+                updateTimeText()
             }
         }
     }

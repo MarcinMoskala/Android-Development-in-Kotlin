@@ -14,13 +14,14 @@ import org.joda.time.LocalTime
 class TasksActivity : AppCompatActivity() {
 
     private val ADD_TASK_REQUEST = 12342
-    private val tasksListAdapter by lazy { TasksListAdapter() }
+    private val EDIT_TASK_REQUEST = 12343
+    private val tasksListAdapter by lazy { TasksListAdapter(this::startEditTaskActivity) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tasks)
         fab.setOnClickListener {
-            startActivityForResult(Intent(this, TaskActivity::class.java), ADD_TASK_REQUEST)
+            startCreateTaskActivity()
         }
         setUpList()
     }
@@ -30,13 +31,17 @@ class TasksActivity : AppCompatActivity() {
             val task = data?.getParcelableExtra<Task>("task") ?: return
             tasksListAdapter.add(task)
         }
+        if (requestCode == EDIT_TASK_REQUEST && resultCode == Activity.RESULT_OK) {
+            val task = data?.getParcelableExtra<Task>("task") ?: return
+            tasksListAdapter.update(task)
+        }
         super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun setUpList() {
-        tasksListAdapter.add(Task("Wash dishes"))
-        tasksListAdapter.add(Task("Make breakfast", date = LocalDate.now()))
-        tasksListAdapter.add(Task("Record awesome course", time = LocalTime.now(), date = LocalDate.now()))
+        tasksListAdapter.add(Task(1, "Wash dishes"))
+        tasksListAdapter.add(Task(2, "Make breakfast", date = LocalDate.now()))
+        tasksListAdapter.add(Task(3, "Record awesome course", time = LocalTime.now(), date = LocalDate.now()))
         tasksListView.adapter = tasksListAdapter
         tasksListView.layoutManager = LinearLayoutManager(this)
 
@@ -54,5 +59,17 @@ class TasksActivity : AppCompatActivity() {
             }
         }
         ItemTouchHelper(simpleItemTouchCallback).attachToRecyclerView(tasksListView)
+    }
+
+    private fun startCreateTaskActivity() {
+        val intent = Intent(this, TaskActivity::class.java)
+        intent.putExtra("id", tasksListAdapter.getNextId())
+        startActivityForResult(intent, ADD_TASK_REQUEST)
+    }
+
+    private fun startEditTaskActivity(task: Task) {
+        val intent = Intent(this, TaskActivity::class.java)
+        intent.putExtra("task", task)
+        startActivityForResult(intent, EDIT_TASK_REQUEST)
     }
 }
