@@ -5,56 +5,75 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.inputmethod.EditorInfo
 import kotlinx.android.synthetic.main.activity_task.*
 import org.joda.time.LocalDate
 import org.joda.time.LocalTime
 
 class TaskActivity : AppCompatActivity() {
 
+    private lateinit var task: Task
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task)
 
         val id = intent.getIntExtra(ID_ARG, -1)
-        var task: Task = if (id == -1) intent.getParcelableExtra(TASK_ARG) else Task(id, "")
+        task = if (id == -1) intent.getParcelableExtra(TASK_ARG) else Task(id, "")
 
-        fun updateDateText() {
-            val date = task.date
-            dateView.text = if (date == null) "Click to chose date" else "Chosen date is " + date.toString(DATE_FORMAT)
-        }
+        setUpTexts()
+        setUpListeners()
+    }
 
-        fun updateTimeText() {
-            val time = task.time
-            timeView.text = if (time == null) "Click to chose time" else "Chosen time is " + time.toString(TIME_FORMAT)
-        }
-
-        taskNameView.setText(task.name)
-        updateDateText()
-        updateTimeText()
-
+    private fun setUpListeners() {
         cancelButton.setOnClickListener {
             setResult(Activity.RESULT_CANCELED)
             finish()
         }
         addTaskButton.setOnClickListener {
-            val name = taskNameView.text.toString()
-            val bundle = Intent()
-            bundle.putExtra(TASK_ARG, task.copy(name = name))
-            setResult(Activity.RESULT_OK, bundle)
-            finish()
+            acceptTask(task)
         }
         dateView.setOnClickListener {
             showDatePicker(LocalDate.now()) { chosenDate ->
                 task = task.copy(date = chosenDate)
-                updateDateText()
+                updateDateText(task)
             }
         }
         timeView.setOnClickListener {
             showTimePicker(LocalTime.now()) { chosenTime ->
                 task = task.copy(time = chosenTime)
-                updateTimeText()
+                updateTimeText(task)
             }
         }
+        taskNameView.setOnEditorActionListener { _, actionId: Int, _ ->
+            val consumeAction = actionId == EditorInfo.IME_ACTION_SEND
+            if (consumeAction) acceptTask(task)
+            consumeAction
+        }
+    }
+
+    private fun setUpTexts() {
+        taskNameView.setText(task.name)
+        updateDateText(task)
+        updateTimeText(task)
+    }
+
+    private fun updateDateText(task: Task) {
+        val date = task.date
+        dateView.text = if (date == null) "Click to chose date" else "Chosen date is " + date.toString(DATE_FORMAT)
+    }
+
+    private fun updateTimeText(task: Task) {
+        val time = task.time
+        timeView.text = if (time == null) "Click to chose time" else "Chosen time is " + time.toString(TIME_FORMAT)
+    }
+
+    private fun acceptTask(task: Task) {
+        val name = taskNameView.text.toString()
+        val bundle = Intent()
+        bundle.putExtra(TASK_ARG, task.copy(name = name))
+        setResult(Activity.RESULT_OK, bundle)
+        finish()
     }
 
     companion object {

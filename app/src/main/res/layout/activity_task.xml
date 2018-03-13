@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context="com.kotlinacademy.todoapp.TaskActivity">
 
-
     <Button
         android:id="@+id/addTaskButton"
         android:layout_width="0dp"
@@ -16,7 +15,8 @@
         android:text="Add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/cancelButton" />
+        app:layout_constraintLeft_toRightOf="@id/cancelButton"
+        android:layout_marginRight="8dp" />
 
     <Button
         android:id="@+id/cancelButton"
@@ -52,6 +52,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:ems="10"
+            android:imeOptions="actionSend"
             android:hint="Type name of new task"
             android:inputType="textPersonName"
             android:text=""
@@ -66,6 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:padding="10dp"
+            tools:text="Click to chose date"
             android:text=""
             android:textSize="16sp" />
 
@@ -74,7 +76,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="Click to chose time"
+            tools:text="Click to chose time"
+            android:text=""
             android:textSize="16sp" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
