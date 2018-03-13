@@ -31,44 +31,44 @@ class TaskActivity : AppCompatActivity() {
             finish()
         }
         addTaskButton.setOnClickListener {
-            acceptTask(task)
+            acceptTask()
         }
         dateView.setOnClickListener {
             showDatePicker(LocalDate.now()) { chosenDate ->
                 task = task.copy(date = chosenDate)
-                updateDateText(task)
+                updateDateText()
             }
         }
         timeView.setOnClickListener {
             showTimePicker(LocalTime.now()) { chosenTime ->
                 task = task.copy(time = chosenTime)
-                updateTimeText(task)
+                updateTimeText()
             }
         }
         taskNameView.setOnEditorActionListener { _, actionId: Int, _ ->
             val consumeAction = actionId == EditorInfo.IME_ACTION_SEND
-            if (consumeAction) acceptTask(task)
+            if (consumeAction) acceptTask()
             consumeAction
         }
     }
 
     private fun setUpTexts() {
         taskNameView.setText(task.name)
-        updateDateText(task)
-        updateTimeText(task)
+        updateDateText()
+        updateTimeText()
     }
 
-    private fun updateDateText(task: Task) {
+    private fun updateDateText() {
         val date = task.date
         dateView.text = if (date == null) "Click to chose date" else "Chosen date is " + date.toString(DATE_FORMAT)
     }
 
-    private fun updateTimeText(task: Task) {
+    private fun updateTimeText() {
         val time = task.time
         timeView.text = if (time == null) "Click to chose time" else "Chosen time is " + time.toString(TIME_FORMAT)
     }
 
-    private fun acceptTask(task: Task) {
+    private fun acceptTask() {
         val name = taskNameView.text.toString()
         val bundle = Intent()
         bundle.putExtra(TASK_ARG, task.copy(name = name))
