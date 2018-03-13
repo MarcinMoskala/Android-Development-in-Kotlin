@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import kotlinx.android.synthetic.main.activity_task.*
 import org.joda.time.LocalDate
@@ -17,6 +19,7 @@ class TaskActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val id = intent.getIntExtra(ID_ARG, -1)
         task = if (id == -1) intent.getParcelableExtra(TASK_ARG) else Task(id, "")
@@ -25,14 +28,24 @@ class TaskActivity : AppCompatActivity() {
         setUpListeners()
     }
 
-    private fun setUpListeners() {
-        cancelButton.setOnClickListener {
-            setResult(Activity.RESULT_CANCELED)
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.task_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean = when(item?.itemId) {
+        android.R.id.home -> {
             finish()
+            true
         }
-        addTaskButton.setOnClickListener {
+        R.id.accept_action -> {
             acceptTask()
+            true
         }
+        else -> super.onOptionsItemSelected(item)
+    }
+
+    private fun setUpListeners() {
         dateView.setOnClickListener {
             showDatePicker(LocalDate.now()) { chosenDate ->
                 task = task.copy(date = chosenDate)
